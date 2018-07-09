@@ -22,6 +22,7 @@ DEVICE_ID = 'sixfab'
 API_KEY = '08d196a1-7478-404c-af33-7bca727432cf'
 SERIAL_PORT = '/dev/ttyS0'
 SERIAL_BAUDRATE=9600
+SAMPLING_PERIOD = 2
 
 ###################################### 
 '''
@@ -210,10 +211,10 @@ def publish_data(datapoints):
 
 
 def sample_and_send():
-    temp = hdc.readTemperature()
-    hum = hdc.readHumidity()
+    temp = round(hdc.readTemperature(), 2)
+    hum = round(hdc.readHumidity(), 2)
     rawLux = adc.read_adc(0,gain=GAIN)
-    lux = (adc.read_adc(LUXCHANNEL,gain=GAIN) * 100)/1580
+    lux = round((adc.read_adc(LUXCHANNEL,gain=GAIN) * 100)/1580, 2)
     
     values = (('temperature.from.pressure', temp), ('humidity', hum), ('lux', lux))
     print values
@@ -221,7 +222,6 @@ def sample_and_send():
     for value in values:
         datapoints_dict = get_one_datapoint(*value)
         datapoints_str = json.dumps(datapoints_dict) 
-        print(datapoints_str)
         publish_data(datapoints_str)
 
 
@@ -230,12 +230,12 @@ def main():
         enable_wan_comms()
         while True:
             sample_and_send()
-            time.sleep(2)
+            time.sleep(SAMPLING_PERIOD)
+    except KeyboardInterrupt:
+        print 'Bye'
     except:
-        pass
+        traceback.print_exc()
 
-    traceback.print_exc()
-    print 'Bye'
 
 
 if __name__ == '__main__':
