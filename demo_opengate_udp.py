@@ -230,10 +230,12 @@ def sample_and_send():
 
 def main():
     try:
+        print "Start date & time " + time.strftime("%c")
         enable_wan_comms()
-        while True:
-            sample_and_send()
-            time.sleep(SAMPLING_PERIOD)
+    #    while True:
+        sample_and_send()
+    #    time.sleep(SAMPLING_PERIOD)
+        print "End date & time " + time.strftime("%c")
     except KeyboardInterrupt:
         print 'Bye'
     except:
