@@ -18,11 +18,11 @@ gpio.setwarnings(False)
 
 OG_UDP_HOST  = '35.157.105.177'
 OG_UDP_PORT = '10000'
-DEVICE_ID = 'sixfab'
-API_KEY = '08d196a1-7478-404c-af33-7bca727432cf'
+OG_API_KEY = 'bc7b7767-6430-4b3c-b4aa-f1b16cd66d4a'
+DEVICE_ID = 'sixfab01'
 SERIAL_PORT = '/dev/ttyS0'
 SERIAL_BAUDRATE=9600
-SAMPLING_PERIOD = 2
+SAMPLING_PERIOD = 300
 
 ###################################### 
 '''
@@ -181,12 +181,15 @@ def get_one_datapoint(datastream, value):
     datapoints = {
         'version': '1.0.0',
         'device': DEVICE_ID,
-        'apikey': API_KEY,
+        'apikey': OG_API_KEY,
         'datastreams': [
             {
                 'id': datastream,
                 'datapoints': [
-                    {'at': current_millis(), 'value': value}
+                    {
+                    #    'at': current_millis(),
+                        'value': value
+                    }
                  ]
             }
         ]
@@ -216,7 +219,7 @@ def sample_and_send():
     rawLux = adc.read_adc(0,gain=GAIN)
     lux = round((adc.read_adc(LUXCHANNEL,gain=GAIN) * 100)/1580, 2)
     
-    values = (('temperature.from.pressure', temp), ('humidity', hum), ('lux', lux))
+    values = (('temperature', temp), ('humidity', hum), ('lux', lux))
     print values
     
     for value in values:
